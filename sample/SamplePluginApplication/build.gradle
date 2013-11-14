@@ -1,0 +1,32 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.6.+'
+    }
+}
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+    maven {
+       url "${rootProject.rootDir}/.repo"
+    }
+}
+
+android {
+    compileSdkVersion 18
+    buildToolsVersion '17.0.0'
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 18
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.brightcove.player:android-sdk:4.0.8'
+    compile project(':SamplePlugin')
+}
