@@ -1,13 +1,15 @@
 Brightcove Plugin Guide for Android
 ===================================
 
-This is a guide for writing plugins for the Brightcove Player for
-Android.  At a high level, plugins are implemented by listening to
-events emitted by the Brightcove Player and other plugins and by
-emitting events for the Brightcove Player and other plugins to use.
+This guide illustrates writing Brightcove Player for Android plugins.
+At a high level, a plugin integrates with the player by listening for
+and emitting events.  A plugin can listen to events from the player
+and from other plugins.  A plugin can emit events for the player and
+for other plugins.
 
-In order to register a plugin, plugins should emit a REGISTER_PLUGIN
-event with a PLUGIN_NAME property.  For example:
+A plugin should register with the SDK when they are instantiated.  To
+register a plugin should emit a `REGISTER_PLUGIN` event with a
+`PLUGIN_NAME` property.  For example:
 
     Map<String, Object> properties = new HashMap<String, Object>();
     properties.put(Event.PLUGIN_NAME, "my custom plugin");
@@ -17,43 +19,72 @@ Video playback typically goes through a standard lifecycle event flow:
 
 ![alt text](https://docs.google.com/drawings/d/1OCLpdRzqua6teFVz1LHCaFXTs4rcNPf5dwU4Djo6MVc/pub?w=1134&amp;h=1228 "Event Flow")
 
-Plugins can listen for any of the initiating events
-(WILL_CHANGE_VIDEO, SET_VIDEO, SET_SOURCE, PLAY, PAUSE, SEEK_TO, and
-STOP) and override the default behavior by calling preventDefault()
-and/or stop propagation by calling stopPropagation().  If only
-preventDefault() is called, the rest of the non-default listeners will
-be notified.  If only stopPropagation() is called, the rest of the
-non-default listeners will be skipped, but the default listeners will
-still be notified.  Plugins can use these methods to pause the normal
-event flow and insert additional behavior, like requesting advertising
-information when a source is set.  Plugins can resume the event flow
-by emitting the original event again.
+A plugin can listen for events, which initiate some action, in order to
+change the default behavior of the player.  These events include:
 
-For plugins, which desire to periodically interrupt the video content,
-there are two important events, WILL_INTERRUPT_CONTENT and
-WILL_RESUME_CONTENT.  Plugins should emit WILL_INTERRUPT_CONTENT to
-request that playback be suspended if it's currently playing and that
-the video view be made invisibile.  Plugins should emit
-WILL_RESUME_CONTENT to request that the video view be make visible.
-The WILL_RESUME_CONTENT event should include an ORIGINAL_EVENT
-property which will be emitted after the video view is visible again.
-The ORIGINAL_EVENT can be a PLAY event to resume playback, a CUE_POINT
-event to continue cue point processing, or a COMPLETED event to
-complete playback.  A SKIP_CUE_POINTS property should be added to the
-ORIGINAL_EVENT to prevent recursive cue point processing.
+1. `WILL_CHANGE_VIDEO`
+2. `SET_VIDEO`
+3. `SET_SOURCE`
+4. `PLAY`
+5. `PAUSE`
+6. `SEEK_TO`
+7. `STOP`
 
-Many plugins will want to listen to CUE_POINT events.  There are three
-types of cue points, BEFORE, POINT_IN_TIME, and AFTER.  Before cue
-points are emitted before playback begins.  Point in time cue points
-are emitted when playback reaches the cue point's position.  After cue
-points are emitted after playback completes.  Plugins should use
-WILL_INTERRUPT_CONTENT and WILL_RESUME_CONTENT events to interrupt and
-resume content playback when handling a cue point event.  In the case
-of before and after cue points, the event will include an
-ORIGINAL_EVENT property, with either a PLAY event or a COMPLETED
-event.  Cue point events also include a CUE_POINTS property with the
-batch of cue points.  START_TIME and END_TIME properties define the
-cue point time range.
+The default behavior can be changed by preventing the default
+listeners from receiving the event and/or by stopping propagation of
+the event to non-default listeners.  Preventing the default listeners
+from receiving the event is accomplished by calling the
+`preventDefault()` method.  Event propagation can be stopped by
+calling the `stopPropagation()` method.  If only `preventDefault()` is
+called, the rest of the non-default listeners will be notified.  If
+only `stopPropagation()` is called, the default listeners will still
+be notified, but the rest of the non-default listeners will be
+skipped.  A plugin can also use these methods to pause the normal
+event flow and insert additional behavior, like initializing the
+plugin.  A plugin can resume the event flow by emitting the original
+event again.
+
+A plugin can also listen for events, which signal the completion of an
+action.  These events are typically used by analytics plugins.  The
+events include:
+
+1. `DID_CHANGE_LIST`
+2. `DID_SELECT_SOURCE`
+3. `DID_PAUSE`
+4. `DID_PLAY`
+5. `DID_SEEK_TO`
+6. `DID_SET_SOURCE`
+7. `DID_STOP`
+8. `PROGRESS`
+9. `COMPLETED`
+
+A plugin, which desires to interrupt the video content playback,
+should use `WILL_INTERRUPT_CONTENT` and `WILL_RESUME_CONTENT`.  These
+events are typically used by advertising pluings.  A plugin should
+emit `WILL_INTERRUPT_CONTENT` to request that playback be suspended,
+if it is currently playing, and to request that the video view be made
+invisibile.  A plugin should emit `WILL_RESUME_CONTENT` to request
+that the video view be made visible again.  The `WILL_RESUME_CONTENT`
+event should include an `ORIGINAL_EVENT` property which will be
+emitted after the video view is made visible.  The `ORIGINAL_EVENT`
+should be a `PLAY` event to resume playback, a `CUE_POINT` event to
+continue cue point processing, or a `COMPLETED` event to complete
+playback.  A `SKIP_CUE_POINTS` property should be added to the
+`ORIGINAL_EVENT` to prevent recursive cue point processing.
+
+Many plugins will want to listen for `CUE_POINT` events.  There are
+three types of cue points, `BEFORE`, `POINT_IN_TIME`, and `AFTER`.
+`BEFORE` cue points are emitted just before playback begins.
+`POINT_IN_TIME` cue points are emitted when playback reaches the cue
+point's position.  `AFTER` cue points are emitted just after playback
+completes.  A plugin should use `WILL_INTERRUPT_CONTENT` and
+`WILL_RESUME_CONTENT` events to interrupt and resume content playback
+when handling a cue point event.  In the case of before and after cue
+points, the event will include an `ORIGINAL_EVENT` property, with
+either a `PLAY` event or a `COMPLETED` event.  Cue point events also
+include a `CUE_POINTS` property with the batch of cue points.
+`START_TIME` and `END_TIME` properties define the cue point time
+range.
 
 The sample directory includes an Android Studio based project with two
 modules, SamplePlugin and SamplePluginApplication.  The SamplePlugin
