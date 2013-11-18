@@ -34,7 +34,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class demonstrates how an application uses the sample plugin.
+ * This class demonstrates how an application incorporates the sample
+ * plugin.
  */
 public class MainActivity extends BrightcovePlayer {
 
@@ -46,8 +47,10 @@ public class MainActivity extends BrightcovePlayer {
         brightcoveVideoView = (BrightcoveVideoView) findViewById(R.id.brightcove_video_view);
         super.onCreate(savedInstanceState);
 
+        // Instantiate the sample plugin.
         new SamplePlugin(brightcoveVideoView.getEventEmitter(), this, brightcoveVideoView);
 
+        // Request a sample playlist from the Brightcove Media API.
         Catalog catalog = new Catalog("ErQk9zUeDVLIp8Dc7aiHKq8hDMgkv5BFU7WGshTc-hpziB3BuYh28A..");
         catalog.findPlaylistByReferenceID("stitch", new PlaylistListener() {
             @Override
@@ -61,6 +64,8 @@ public class MainActivity extends BrightcovePlayer {
             }
         });
 
+        // Set up a listener to establish the cue points once the
+        // MediaPlayer has been prepared.
         brightcoveVideoView.getEventEmitter().on(EventType.DID_SET_SOURCE, new EventListener() {
             @Override
             public void processEvent(Event event) {
@@ -70,18 +75,19 @@ public class MainActivity extends BrightcovePlayer {
         });
     }
 
+    // Sets up a preroll, midroll at 10 seconds, and a postroll.
     private void setupCuePoints(Source source) {
         String cuePointType = "ad";
         Map<String, Object> properties = new HashMap<String, Object>();
         EventEmitter eventEmitter = brightcoveVideoView.getEventEmitter();
 
-        // preroll
+        // create the preroll
         CuePoint cuePoint = new CuePoint(CuePoint.PositionType.BEFORE, cuePointType,
                                          Collections.<String, Object>emptyMap());
         properties.put(Event.CUE_POINT, cuePoint);
         eventEmitter.emit(EventType.SET_CUE_POINT, properties);
 
-        // midroll, these don't work with HLS videos due to an Android bug.
+        // create the midroll, these don't work with HLS videos due to an Android bug.
         Log.v(TAG, "delivery type: " + source.getProperties().get(SourceAwareMetadataObject.Fields.DELIVERY_TYPE));
         if (!DeliveryType.HLS.equals(source.getProperties().get(SourceAwareMetadataObject.Fields.DELIVERY_TYPE))) {
             cuePoint = new CuePoint(10000, cuePointType, Collections.<String, Object>emptyMap());
@@ -89,7 +95,7 @@ public class MainActivity extends BrightcovePlayer {
             eventEmitter.emit(EventType.SET_CUE_POINT, properties);
         }
 
-        // postroll
+        // create the postroll
         cuePoint = new CuePoint(CuePoint.PositionType.AFTER, cuePointType,
                                 Collections.<String, Object>emptyMap());
         properties.put(Event.CUE_POINT, cuePoint);

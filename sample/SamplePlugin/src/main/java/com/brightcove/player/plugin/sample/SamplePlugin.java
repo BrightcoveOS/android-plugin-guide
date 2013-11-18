@@ -58,17 +58,18 @@ public class SamplePlugin extends AbstractComponent
 
     public static final String TAG = SamplePlugin.class.getSimpleName();
 
+    // Used to play the simulated advertisement.
     private VideoView videoView;
-    private Context context;
+    // Used to contain the VideoView.
     private ViewGroup viewGroup;
-
-    // Used to resume PLAY or COMPLETED after the ads are finished.
+    // Used to resume PLAY or COMPLETED after the simulated
+    // advertisement is finished.
     private Event originalEvent;
 
     public SamplePlugin(EventEmitter emitter, Context context, ViewGroup viewGroup) {
         super(emitter, SamplePlugin.class);
-        this.context = context;
         this.viewGroup = viewGroup;
+        this.videoView = new VideoView(context);
 
         Log.d(TAG, "Initializing " + TAG);
         initializeListeners();
@@ -86,6 +87,8 @@ public class SamplePlugin extends AbstractComponent
         addListener(EventType.PROGRESS, new OnProgressListener());
     }
 
+    // CUE_POINT happens after one or more cue points has been
+    // reached.
     private class OnCuePointListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -98,7 +101,6 @@ public class SamplePlugin extends AbstractComponent
             eventEmitter.emit(EventType.WILL_INTERRUPT_CONTENT);
 
             // Simulate playing a video advertisement.
-            videoView = new VideoView(context);
             FrameLayout.LayoutParams layoutParams =
                 new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                              ViewGroup.LayoutParams.MATCH_PARENT,
@@ -111,17 +113,23 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // Handle completion by resuming content playback.
+    @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
         Log.v(TAG, "onCompletion");
         resume();
     }
 
+    // Handle errors by resuming content playback.
+    @Override
     public boolean onError(MediaPlayer mediaPlayer, int frameworkError, int implementationError) {
         Log.v(TAG, "onError: " + frameworkError + ", " + implementationError);
         resume();
         return true;
     }
 
+    // Clean up the VideoView and emit WILL_RESUME_CONTENT to signal
+    // to the SDK that content playback should resume.
     private void resume() {
         try {
             videoView.suspend();
@@ -141,6 +149,8 @@ public class SamplePlugin extends AbstractComponent
         eventEmitter.emit(EventType.WILL_RESUME_CONTENT, properties);
     }
 
+    // DID_SET_SOURCE happens after the MediaPlayer.OnPreparedListener
+    // callback has been invoked.
     private class OnDidSetSourceListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -148,6 +158,7 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // DID_SET_VIDEO happens after DID_SET_SOURCE.
     private class OnDidSetVideoListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -155,6 +166,7 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // DID_PLAY happens after playback has begun.
     private class OnDidPlayListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -162,6 +174,8 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // DID_PAUSE happens after pause() has been called on the
+    // MediaPlayer.
     private class OnDidPauseListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -169,6 +183,8 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // DID_SEEK_TO happens after the
+    // MediaPlayer.OnSeekCompleteListener() callback has been invoked.
     private class OnDidSeekToListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -176,6 +192,7 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // DID_STOP happens after the MediaPlayer has been released.
     private class OnDidStopListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -183,6 +200,7 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // PROGRESS happens every 500 milliseconds during playback.
     private class OnProgressListener implements EventListener {
         @Override
         public void processEvent(Event event) {
@@ -190,6 +208,8 @@ public class SamplePlugin extends AbstractComponent
         }
     }
 
+    // COMPLETED happens after the MediaPlayer.OnCompletionListener()
+    // callback has been invoked.
     private class OnCompletedListener implements EventListener {
         @Override
         public void processEvent(Event event) {
