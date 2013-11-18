@@ -93,6 +93,20 @@ writing new plugins.  The SamplePluginApplication module shows how
 plugins are incorprated into an Brightcove video application and can
 be used to test the SamplePlugin or new plugins.
 
+The steps to writing a plugin include:
+
+1. Copy the sample plugin to a new repository.
+2. Change the package and class names.
+3. Update the TAG initializer.
+4. Edit the @Emits and @ListensFor annotations to reflect the events
+   which the plugin emits and listens for.
+5. Modify the constructor as necessary.
+6. Replace or remove the videoView related logic as necessary.
+7. Modify initializeListeners() by adding and/or subtracting event
+   listeners as necessary.
+8. Compile and distribute your plugin as a .jar file for Eclipse
+   and/or a .aar file for Android Studio.
+
 For Brightcove Player SDK for Android documentation and downloads,
 see:
 
