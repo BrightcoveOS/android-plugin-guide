@@ -106,7 +106,7 @@ public class SamplePlugin extends AbstractComponent
                                              ViewGroup.LayoutParams.MATCH_PARENT,
                                              Gravity.CENTER);
             viewGroup.addView(videoView, layoutParams);
-            videoView.setVideoPath("http://solutions.brightcove.com/truggles/temp/fishtank.mp4");
+            videoView.setVideoPath("http://secure.eyereturn.com/10807/clouds_v1.mp4");
             videoView.setOnCompletionListener(SamplePlugin.this);
             videoView.setOnErrorListener(SamplePlugin.this);
             videoView.start();
