@@ -1,14 +1,14 @@
 Brightcove Plugin Guide for Android
 ===================================
 
-This guide illustrates writing Brightcove Player for Android plugins.
+This guide illustrates writing *Brightcove Player for Android* plugins.
 At a high level, a plugin integrates with the player by listening for
 and emitting events.  A plugin can listen to events from the player
 and from other plugins.  A plugin can emit events for the player and
 for other plugins.
 
-A plugin should register with the SDK when they are instantiated.  To
-register a plugin should emit a `REGISTER_PLUGIN` event with a
+A plugin should register with the SDK when created.  To become
+registered, a plugin should emit a `REGISTER_PLUGIN` event with a
 `PLUGIN_NAME` property.  For example:
 
     Map<String, Object> properties = new HashMap<String, Object>();
@@ -40,7 +40,7 @@ called, the rest of the non-default listeners will be notified.  If
 only `stopPropagation()` is called, the default listeners will still
 be notified, but the rest of the non-default listeners will be
 skipped.  A plugin can also use these methods to pause the normal
-event flow and insert additional behavior, like initializing the
+event flow and insert additional behaviors, like initializing the
 plugin.  A plugin can resume the event flow by emitting the original
 event again.
 
@@ -60,10 +60,10 @@ events include:
 
 A plugin, which desires to interrupt the video content playback,
 should use `WILL_INTERRUPT_CONTENT` and `WILL_RESUME_CONTENT`.  These
-events are typically used by advertising pluings.  A plugin should
+events are typically used by advertising plugins.  A plugin should
 emit `WILL_INTERRUPT_CONTENT` to request that playback be suspended,
 if it is currently playing, and to request that the video view be made
-invisibile.  A plugin should emit `WILL_RESUME_CONTENT` to request
+invisible.  A plugin should emit `WILL_RESUME_CONTENT` to request
 that the video view be made visible again.  The `WILL_RESUME_CONTENT`
 event should include an `ORIGINAL_EVENT` property which will be
 emitted after the video view is made visible.  The `ORIGINAL_EVENT`
@@ -87,11 +87,11 @@ include a `CUE_POINTS` property with the batch of cue points.
 range.
 
 The sample directory includes an Android Studio based project with two
-modules, SamplePlugin and SamplePluginApplication.  The SamplePlugin
+modules, **SamplePlugin** and **SamplePluginApplication**.  The **SamplePlugin**
 module is an example plugin, which can be used as the basis for
-writing new plugins.  The SamplePluginApplication module shows how
-plugins are incorprated into an Brightcove video application and can
-be used to test the SamplePlugin or new plugins.
+writing new plugins.  The **SamplePluginApplication** module shows how
+plugins are incorporated into a Brightcove video application and can
+be used to test the **SamplePlugin** or new plugins.
 
 The steps to writing a plugin include:
 
@@ -107,7 +107,7 @@ The steps to writing a plugin include:
 8. Compile and distribute your plugin as a .jar file for Eclipse
    and/or a .aar file for Android Studio.
 
-For Brightcove Player SDK for Android documentation and downloads,
+For *Brightcove Player SDK for Android* documentation and downloads,
 see:
 
 [http://docs.brightcove.com/en/video-cloud/brightcove-player-sdk-for-android/index.html](http://docs.brightcove.com/en/video-cloud/brightcove-player-sdk-for-android/index.html)
