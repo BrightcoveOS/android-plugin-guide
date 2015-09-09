@@ -1,25 +1,24 @@
 apply plugin: 'android'
 
 repositories {
-  mavenCentral()
+  jcenter()
   maven {
-    url "http://nexus.vidmark.local:8081/nexus/content/repositories/public"
+    url 'http://repo.brightcove.com/releases'
   }
-  mavenLocal()
 }
 
 android {
-  compileSdkVersion 19
-  buildToolsVersion "17.0.0"
+  compileSdkVersion 22
+  buildToolsVersion "22.0.1"
 
   defaultConfig {
     minSdkVersion 10
-    targetSdkVersion 18
+    targetSdkVersion 22
   }
 }
 
 dependencies {
   compile 'com.android.support:appcompat-v7:+'
-  compile "com.brightcove.player:android-sdk:4.0.+"
+  compile "com.brightcove.player:android-sdk:4.+"
   compile project(':SamplePlugin')
 }
